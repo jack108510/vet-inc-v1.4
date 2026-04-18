@@ -5258,8 +5258,7 @@ async function calLoad(){
   sumEl.innerHTML=kpi("Month Revenue",calFmtFull(totalRev))
     +kpi("Total COGS",(totalCogs>0?calFmtFull(totalCogs):"—"),"#ef4444")
     +kpi("Gross Profit",(totalCogs>0?calFmtFull(totalRev-totalCogs):"—"),"#16a34a")
-    +kpi("Fixed / Day",calFmtFull(dailyFixed),"#8b5cf6")
-    +kpi("Avg Margin",(avgM==null?"—":avgM.toFixed(1)+"%"),avgM>=85?"#16a34a":avgM>=70?"#ca8a04":"#ef4444");
+    +kpi("Gross Profit (%)",(totalCogs>0&&totalRev>0?((totalRev-totalCogs)/totalRev*100).toFixed(1)+"%":"—"),"#16a34a")
 }
 
 async function openDayModal(day){
@@ -5301,7 +5300,7 @@ async function openDayModal(day){
   h+=kpi("Revenue",calFmtFull(rev),"#1e3a5f");
   h+=kpi("COGS",calFmtFull(cogs),"#ef4444");
   h+=kpi("Gross Profit",calFmtFull(gp),"#16a34a");
-  h+=kpi("Margin",margin.toFixed(1)+"%",margin>=85?"#16a34a":margin>=70?"#ca8a04":"#ef4444");
+  h+=kpi("Gross Profit (%)",margin.toFixed(1)+"%",margin>=85?"#16a34a":margin>=70?"#ca8a04":"#ef4444");
   h+=kpi("Fixed Cost",calFmtFull(dailyFixed),"#8b5cf6");
   h+=kpi("Net Profit",calFmtFull(netProfit),netProfit>=0?"#16a34a":"#ef4444");
   h+=kpi("Staff Cost","\u2014","#64748b");

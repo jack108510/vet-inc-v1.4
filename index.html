@@ -1204,7 +1204,7 @@
  --><section id="tab-campaigns" class="section"><div id="campaignsLoading" class="loading"><div class="spinner"></div> Analyzing pricing opportunities
  </div><div id="campaignsContent" style="display:none">
   <div style="display:flex;justify-content:flex-end;gap:10px;padding:0 1.75rem 0.8rem 1.75rem">
-    <button class="price-review-btn" onclick="openPriceReview()">Bulk Price Review</button>
+
   </div>
   <!-- Campaign 1: Inflation Adjuster --><div class="campaign-card c-blue"><div class="campaign-header"><div class="campaign-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg></div><div class="campaign-meta"><div class="campaign-title">Inflation Price Adjustment Report</div><div class="campaign-desc">Uses real price history (exact last-modified date per item) and actual transaction volume over the last 365 days. Canadian CPI is compounded from the last price change to today &mdash; showing exactly what each item should cost now and the annual revenue left on the table.</div><div class="campaign-status" id="c1Status">
       <span class="campaign-badge" id="c1Badge" style="display:none"></span><div class="badge inactive" id="c1StatusBadge"><span>&#9679;</span> Not Started</div>
@@ -5480,7 +5480,7 @@ function openCampaignImplement(type){
         const suggested = tds[6] || '';
         const usage = tds[8] || '0';
         const uplift = tds[9] || '0';
-        return `<div class="impl-row" data-uplift="${uplift}"><div style="flex:1;min-width:160px"><b>${name}</b></div><span style="font-size:.82rem">${current} → <b>${suggested}</b></span><span class="impl-usage">${usage}/yr</span><button class="remove-btn" onclick="toggleImplRow(this)">Remove</button></div>`;
+        return `<div class="impl-row" data-uplift="${uplift}"><div style="flex:1;min-width:160px"><b>${name}</b></div><span style="font-size:.82rem">${current} → <b>${suggested}</b></span><span class="impl-usage">${usage}/yr</span><span style="font-size:.82rem;font-weight:700;color:var(--green)">${uplift}/yr</span><button class="remove-btn" onclick="toggleImplRow(this)">Remove</button></div>`;
       }
       if (type==='99-pricing') {
         const name = tds[0] || '';
@@ -5488,14 +5488,14 @@ function openCampaignImplement(type){
         const suggested = tds[3] || '';
         const usage = tds[5] || '0';
         const uplift = tds[6] || '0';
-        return `<div class="impl-row" data-uplift="${uplift}"><div style="flex:1;min-width:160px"><b>${name}</b></div><span style="font-size:.82rem">${current} → <b>${suggested}</b></span><span class="impl-usage">${usage}/yr</span><button class="remove-btn" onclick="toggleImplRow(this)">Remove</button></div>`;
+        return `<div class="impl-row" data-uplift="${uplift}"><div style="flex:1;min-width:160px"><b>${name}</b></div><span style="font-size:.82rem">${current} → <b>${suggested}</b></span><span class="impl-usage">${usage}/yr</span><span style="font-size:.82rem;font-weight:700;color:var(--green)">${uplift}/yr</span><button class="remove-btn" onclick="toggleImplRow(this)">Remove</button></div>`;
       }
       const name = tds[0] || '';
       const current = (tds[1]||'').replace(/\s+/g,' ');
       const suggested = (tds[2]||'').replace(/\s+/g,' ');
       const usage = tds[3] || '0';
       const uplift = tds[4] || '0';
-      return `<div class="impl-row" data-uplift="${uplift}"><div style="flex:1;min-width:160px"><b>${name}</b></div><span style="font-size:.82rem">${current} → <b>${suggested}</b></span><span class="impl-usage">${usage}/yr</span><button class="remove-btn" onclick="toggleImplRow(this)">Remove</button></div>`;
+      return `<div class="impl-row" data-uplift="${uplift}"><div style="flex:1;min-width:160px"><b>${name}</b></div><span style="font-size:.82rem">${current} → <b>${suggested}</b></span><span class="impl-usage">${usage}/yr</span><span style="font-size:.82rem;font-weight:700;color:var(--green)">${uplift}/yr</span><button class="remove-btn" onclick="toggleImplRow(this)">Remove</button></div>`;
     }).join('');
   }
   updateImplementTotal();

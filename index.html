@@ -5308,11 +5308,13 @@ async function openDayModal(day){
     return;
   }
   var rev=data.rev,cogs=data.cogs,gp=rev-cogs,margin=rev>0?gp/rev*100:0;
+  var staffCost=data.staff_cost||0;
+  var staffHours=data.staff_hours||0;
   var monthlyFixed=0;
   if(window.clinicTotalFixed) monthlyFixed=window.clinicTotalFixed();
   var daysInMonth=new Date(d.getFullYear(), d.getMonth()+1, 0).getDate();
   var dailyFixed=monthlyFixed/daysInMonth;
-  var netProfit=gp-dailyFixed;
+  var netProfit=gp-dailyFixed-staffCost;
   var avgTxn=data.visits>0?rev/data.visits:0;
   var sorted=Object.values(data.items).sort(function(a,b){return b.rev-a.rev;});
 
@@ -5324,9 +5326,11 @@ async function openDayModal(day){
   h+=kpi("COGS",calFmtFull(cogs),"#ef4444");
   h+=kpi("Gross Profit",calFmtFull(gp),"#16a34a");
   h+=kpi("Gross Profit (%)",margin.toFixed(1)+"%",margin>=85?"#16a34a":margin>=70?"#ca8a04":"#ef4444");
+  var trueProfit=rev-cogs-staffCost;
   h+=kpi("Fixed Cost",calFmtFull(dailyFixed),"#8b5cf6");
-  h+=kpi("Net Profit",calFmtFull(netProfit),netProfit>=0?"#16a34a":"#ef4444");
-  h+=kpi("Staff Cost","\u2014","#64748b");
+  h+=kpi("Staff Cost",staffCost>0?calFmtFull(staffCost):"\u2014","#2563eb");
+  h+=kpi("Staff Hours",staffHours>0?staffHours.toFixed(1)+"h":"\u2014","#2563eb");
+  h+=kpi("Net Profit (after labor)",calFmtFull(trueProfit),trueProfit>=0?"#16a34a":"#ef4444");
   h+=kpi("Avg per Visit",calFmtFull(avgTxn),"#0ea5e9");
   h+=kpi("Visits",""+data.visits,"#1e3a5f");
   h+=kpi("Unique Services",""+data.unique_services,"#1e3a5f");

@@ -1271,7 +1271,9 @@
   </div>
 </div>
 <div style="display:flex;gap:1rem;margin-bottom:1rem;flex-wrap:wrap">
-  <span style="display:flex;align-items:center;gap:0.35rem;font-size:0.73rem;color:var(--muted)"><span style="width:10px;height:10px;border-radius:2px;background:#dcfce7;border:1px solid #16a34a;display:inline-block"></span>Margin &gt;85%</span>
+  <span style="display:flex;align-items:center;gap:0.35rem;font-size:0.73rem;color:var(--muted)"><span style="width:10px;height:10px;border-radius:2px;background:#dcfce7;border:1px solid #16a34a;display:inline-block"></span>Net &gt;50%</span>
+  <span style="display:flex;align-items:center;gap:0.35rem;font-size:0.73rem;color:var(--muted)"><span style="width:10px;height:10px;border-radius:2px;background:#fef9c3;border:1px solid #ca8a04;display:inline-block"></span>Net 30-50%</span>
+  <span style="display:flex;align-items:center;gap:0.35rem;font-size:0.73rem;color:var(--muted)"><span style="width:10px;height:10px;border-radius:2px;background:#fee2e2;border:1px solid #ef4444;display:inline-block"></span>Net &lt;30%</span>
   <span style="display:flex;align-items:center;gap:0.35rem;font-size:0.73rem;color:var(--muted)"><span style="width:10px;height:10px;border-radius:2px;background:#fef9c3;border:1px solid #ca8a04;display:inline-block"></span>70-85%</span>
   <span style="display:flex;align-items:center;gap:0.35rem;font-size:0.73rem;color:var(--muted)"><span style="width:10px;height:10px;border-radius:2px;background:#fee2e2;border:1px solid #ef4444;display:inline-block"></span>&lt;70%</span>
   <span style="display:flex;align-items:center;gap:0.35rem;font-size:0.73rem;color:var(--muted)"><span style="width:10px;height:10px;border-radius:2px;background:#f1f5f9;border:1px solid #cbd5e1;display:inline-block"></span>Closed</span>
@@ -5166,12 +5168,23 @@ async function calFetchMonth(y,m){
     });
   }
 
-  // 3. Merge
+  // 3. Staff costs from daily_staff_cost
+  var staffMap={};
+  var sr=await fetch(SB_URL+"/rest/v1/daily_staff_cost?select=day,staff_cost,staff_hours,staff_count,shifts&day=gte."+s+"&day=lt."+e+"&limit=1000",{headers:{"apikey":SB_KEY,"Authorization":"Bearer "+SB_KEY}});
+  if(sr.ok){
+    var staffRows=await sr.json();
+    staffRows.forEach(function(r){
+      if(r.day) staffMap[String(r.day).slice(0,10)]={cost:r.staff_cost||0,hours:r.staff_hours||0,count:r.staff_count||0,shifts:r.shifts||0};
+    });
+  }
+
+  // 4. Merge
   var byDay={};
-  var allDays=new Set(Object.keys(kpiMap).concat(Object.keys(cogsMap)));
+  var allDays=new Set(Object.keys(kpiMap).concat(Object.keys(cogsMap)).concat(Object.keys(staffMap)));
   allDays.forEach(function(day){
     var k=kpiMap[day];
-    byDay[day]={rev:k?k.rev:0,cogs:(cogsMap[day]===undefined?null:cogsMap[day]),visits:k?k.visits:0,line_items:k?k.line_items:0,unique_services:k?k.unique_services:0,avg_line:k?k.avg_line:0};
+    var st=staffMap[day];
+    byDay[day]={rev:k?k.rev:0,cogs:(cogsMap[day]===undefined?null:cogsMap[day]),staff_cost:st?st.cost:0,staff_hours:st?st.hours:0,staff_count:st?st.count:0,shifts:st?st.shifts:0,visits:k?k.visits:0,line_items:k?k.line_items:0,unique_services:k?k.unique_services:0,avg_line:k?k.avg_line:0};
   });
   return byDay;
 }
@@ -5189,7 +5202,12 @@ async function calFetchDay(day){
   var crows=cr.ok?await cr.json():[];
   var cogs=crows.length? (crows[0].cogs||0) : 0;
 
-  return {rev:rev,cogs:cogs,items:{},txns:kpi.line_items||0,visits:kpi.visits||0,line_items:kpi.line_items||0,unique_services:kpi.unique_services||0,avg_line:kpi.avg_line_amount||0};
+  // Staff cost from daily_staff_cost
+  var str=await fetch(SB_URL+"/rest/v1/daily_staff_cost?select=day,staff_cost,staff_hours,staff_count,shifts&day=eq."+day,{headers:{"apikey":SB_KEY,"Authorization":"Bearer "+SB_KEY}});
+  var strows=str.ok?await str.json():[];
+  var st=strows.length?strows[0]:{staff_cost:0,staff_hours:0,staff_count:0,shifts:0};
+
+  return {rev:rev,cogs:cogs,staff_cost:st.staff_cost||0,staff_hours:st.staff_hours||0,staff_count:st.staff_count||0,shifts:st.shifts||0,items:{},txns:kpi.line_items||0,visits:kpi.visits||0,line_items:kpi.line_items||0,unique_services:kpi.unique_services||0,avg_line:kpi.avg_line_amount||0};
 }
 
 
@@ -5226,21 +5244,23 @@ async function calLoad(){
       cell.style.cssText="padding:0.4rem 0.5rem;min-height:85px;border-right:"+br+";border-bottom:1px solid #dbeafe;background:#f8fafc;";
       cell.innerHTML="<div style='font-size:0.72rem;font-weight:700;color:#94a3b8'>"+d+"</div><div style='font-size:0.65rem;color:#cbd5e1;margin-top:4px'>Closed</div>";
     } else {
-      var rev=dd.rev,cogs=dd.cogs;
+      var rev=dd.rev,cogs=dd.cogs,staffCost=dd.staff_cost||0;
       var gp=(cogs==null?0:(rev-cogs));
+      var trueProfit=rev-(cogs||0)-staffCost;
       var margin=(cogs==null?0:(rev>0?gp/rev*100:0));
+      var trueMargin=rev>0?trueProfit/rev*100:0;
       var cogsP=(cogs==null?0:(rev>0?cogs/rev*100:0));
       totalRev+=rev; if(cogs!=null) totalCogs+=cogs;
       var bg,bc;
       if(cogs==null){bg="#eef2ff";bc="#6366f1";}
-      else if(margin>=85){bg="#dcfce7";bc="#16a34a";}
-      else if(margin>=70){bg="#fef9c3";bc="#ca8a04";}
+      else if(trueMargin>=50){bg="#dcfce7";bc="#16a34a";}
+      else if(trueMargin>=30){bg="#fef9c3";bc="#ca8a04";}
       else{bg="#fee2e2";bc="#ef4444";}
       cell.style.cssText="padding:0.4rem 0.5rem;min-height:85px;border-right:"+br+";border-bottom:1px solid #dbeafe;background:"+bg+";border-left:3px solid "+bc+";cursor:pointer;";
       cell.innerHTML="<div style='font-size:0.72rem;font-weight:700;color:#1e3a5f'>"+d+"</div>"
         +"<div style='font-size:0.8rem;font-weight:700;color:#1e3a5f'>"+calFmt(rev)+"</div>"
-        +"<div style='font-size:0.64rem;color:#64748b'>COGS "+(cogs==null?"—":calFmt(cogs))+"</div>"
-        +"<div style='font-size:0.64rem;font-weight:600;color:"+bc+"'>"+(cogs==null?"":cogsP.toFixed(1)+"% of rev")+"</div>";
+        +"<div style='font-size:0.64rem;color:#64748b'>COGS "+(cogs==null?"—":calFmt(cogs))+(staffCost>0?" | Labor "+calFmt(staffCost):"")+"</div>"
+        +"<div style='font-size:0.64rem;font-weight:600;color:"+bc+"'>"+(cogs==null?"":"Net "+(trueMargin).toFixed(1)+"%")+"</div>";
       (function(dayStr){cell.onclick=function(){openDayModal(dayStr);};})(ds);
     }
     container.appendChild(cell);
@@ -5250,6 +5270,8 @@ async function calLoad(){
   if(rem>0){for(var i=rem;i<7;i++){var em=document.createElement("div");em.style.cssText="min-height:85px;border-bottom:1px solid #dbeafe;background:#fafbff;";container.appendChild(em);}}
 
   var avgM=(totalRev>0 && totalCogs>0)?(totalRev-totalCogs)/totalRev*100:null;
+  var totalStaffCost=Object.values(byDay).reduce(function(a,b){return a+(b.staff_cost||0);},0);
+  var totalNetProfit=totalRev-(totalCogs||0)-totalStaffCost;
   var sumEl=document.getElementById("calSummary");
   function kpi(l,v,c){return "<div style='display:flex;flex-direction:column;gap:2px'><div style='font-size:0.68rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.05em'>"+l+"</div><div style='font-size:1rem;font-weight:700;color:"+(c||"var(--text)")+"'>"+v+"</div></div>";}
   var monthlyFixed=0; if(window.clinicTotalFixed) monthlyFixed=window.clinicTotalFixed();
@@ -5257,8 +5279,9 @@ async function calLoad(){
   var dailyFixed=monthlyFixed/daysInMonth;
   sumEl.innerHTML=kpi("Month Revenue",calFmtFull(totalRev))
     +kpi("Total COGS",(totalCogs>0?calFmtFull(totalCogs):"—"),"#ef4444")
-    +kpi("Gross Profit",(totalCogs>0?calFmtFull(totalRev-totalCogs):"—"),"#16a34a")
-    +kpi("Gross Profit (%)",(totalCogs>0&&totalRev>0?((totalRev-totalCogs)/totalRev*100).toFixed(1)+"%":"—"),"#16a34a")
+    +kpi("Total Labor",(totalStaffCost>0?calFmtFull(totalStaffCost):"—"),"#2563eb")
+    +kpi("Net Profit",(totalNetProfit>0?calFmtFull(totalNetProfit):"—"),"#16a34a")
+    +kpi("Net Margin (%)",(totalRev>0?(totalNetProfit/totalRev*100).toFixed(1)+"%":"—"),"#16a34a")
 }
 
 async function openDayModal(day){

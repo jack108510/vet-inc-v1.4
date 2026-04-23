@@ -332,8 +332,70 @@ const CampaignHealth = (() => {
   // --- Acknowledge alert ---
   async function acknowledgeAlert(alertId) {
     await sbPatch('campaign_alerts', `id=eq.${alertId}`, { acknowledged: true });
-    await refresh();
+    // Also inject alerts into the Insights Inbox
+    injectInsightAlerts(alerts);
   }
 
-  return { init, refresh, setMetric, captureBaseline, acknowledgeAlert };
-})();
+  // --- Inject health alerts into Insights & Actions inbox ---
+  function injectInsightAlerts(alerts) {
+    const inbox = document.querySelector('#tab-insights .insight-inbox');
+    if (!inbox) return;
+
+    // Remove previous health alerts
+    inbox.querySelectorAll('.health-alert-insight').forEach(el => el.remove());
+
+    if (!alerts.length) return;
+
+    // Insert after the title
+    const titleEl = inbox.querySelector('.settings-card-title');
+    const alertHtml = alerts.map(a => {
+      const m = METRICS.find(x => x.key === a.metric) || { label: a.metric, fmt: v => v };
+      const pct = parseFloat(a.pct_change).toFixed(1);
+      const icon = pct < 0 ? '🔴' : '🟢';
+      const severity = a.severity === 'critical' ? 'CRITICAL' : 'WARNING';
+      const sevColor = a.severity === 'critical' ? '#ef4444' : '#ea580c';
+      return `<div class="insight-item health-alert-insight" onclick="this.classList.toggle('open')" style="border-left:3px solid ${sevColor}">
+        <div class="insight-title">${icon} Campaign Health — ${m.label} dropped ${pct}%</div>
+        <div class="insight-body">Actual: ${m.fmt(a.actual_value)} vs Baseline: ${m.fmt(a.baseline_value)} (${a.alert_date})</div>
+        <div class="insight-actions">
+          <span class="insight-pill" style="background:${sevColor}15;color:${sevColor}">${severity}</span>
+          <span class="insight-pill" style="cursor:pointer" onclick="event.stopPropagation();CampaignHealth.acknowledgeAlert('${a.id}')">Acknowledge</span>
+        </div>
+        <div class="insight-detail">This metric has dropped below the alert threshold. Check the Campaign Health tab for the full before/after chart and trend analysis.</div>
+      </div>`;
+    }).join('');
+
+    const wrapper = document.createElement('div');
+    wrapper.innerHTML = alertHtml;
+    // Insert right after the title
+    if (titleEl && titleEl.nextSibling) {
+      while (wrapper.firstChild) {
+        inbox.insertBefore(wrapper.firstChild, titleEl.nextSibling);
+      }
+    } else {
+      // Append at end
+      while (wrapper.firstChild) inbox.appendChild(wrapper.firstChild);
+    }
+  }
+
+  // --- Load alerts into Insights inbox (called on page load and insights tab switch) ---
+  async function loadInsightAlerts() {
+    try {
+      // Get all active campaigns
+      const campaigns = await sbGet('campaigns', 'select=id&clinic_id=eq.rosslyn&status=eq.active');
+      if (!campaigns.length) return;
+
+      const ids = campaigns.map(c => c.id);
+      // Fetch all unacknowledged alerts for active campaigns
+      const allAlerts = [];
+      for (const cid of ids) {
+        const alerts = await sbGet('campaign_alerts', `select=*&campaign_id=eq.${cid}&acknowledged=eq.false&order=alert_date.desc&limit=10`);
+        allAlerts.push(...alerts);
+      }
+      injectInsightAlerts(allAlerts);
+    } catch (e) {
+      console.error('Failed to load insight alerts', e);
+    }
+  }
+
+  return { init, refresh, setMetric, captureBaseline, acknowledgeAlert, loadInsightAlerts };})();

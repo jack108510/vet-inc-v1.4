@@ -5652,7 +5652,12 @@ function closeImplement(){
   window.showTab = function(name, btn) {
     _origShowTab(name, btn);
     if (name === 'health') CampaignHealth.init();
+    if (name === 'insights') CampaignHealth.loadInsightAlerts();
   };
+  // Also load alerts on page init
+  document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(function() { CampaignHealth.loadInsightAlerts(); }, 2000);
+  });
 })();
 </script>
 </body></html>

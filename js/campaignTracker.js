@@ -286,6 +286,126 @@ const CampaignTracker = (() => {
     return '$' + Math.abs(n).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
   }
 
+  // --- Health Tracking Functions ---
+
+  // Capture today's health metrics into campaign_snapshots
+  async function captureHealthSnapshot(campaignId) {
+    const today = new Date().toISOString().split('T')[0];
+    const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0];
+
+    // Fetch today's data
+    const [revenue, visits, clients, exams] = await Promise.all([
+      sbFetch('csi_pf_totals', `select=ros&date=eq.${today}`),
+      sbFetch('visits', `select=ref_id&visit_date=eq.${today}`),
+      sbFetch('visits', `select=ref_id&visit_date=eq.${today}`),
+      sbFetch('services', `select=amount&or=(description.like.*HC%,description.like.*HEF%)&service_date=eq.${today}`)
+    ]);
+
+    const dailyRevenue = revenue.reduce((s, r) => s + (parseFloat(r.ros) || 0), 0);
+    const dailyVisits = visits.length;
+    const uniqueClients = new Set(clients.map(c => c.ref_id).filter(Boolean)).size;
+    const examCount = exams.length;
+    const examRevenue = exams.reduce((s, e) => s + (parseFloat(e.amount) || 0), 0);
+    const avgVisitValue = dailyVisits > 0 ? dailyRevenue / dailyVisits : 0;
+
+    // Upsert snapshot
+    const existing = await sbFetch('campaign_snapshots',
+      `select=id&campaign_id=eq.${campaignId}&snapshot_date=eq.${today}`
+    );
+
+    const data = {
+      campaign_id: campaignId,
+      snapshot_date: today,
+      daily_revenue: Math.round(dailyRevenue * 100) / 100,
+      daily_visits: dailyVisits,
+      exam_count: examCount,
+      exam_revenue: Math.round(examRevenue * 100) / 100,
+      avg_visit_value: Math.round(avgVisitValue * 100) / 100,
+      unique_clients: uniqueClients
+    };
+
+    if (existing.length) {
+      return sbUpdate('campaign_snapshots', `id=eq.${existing[0].id}`, data);
+    } else {
+      return sbInsert('campaign_snapshots', {
+        ...data,
+        implemented_count: 0,
+        total_count: 0,
+        captured_revenue: 0,
+        potential_revenue: 0
+      });
+    }
+  }
+
+  // Check health metrics against baselines and create alerts
+  async function checkHealthAlerts(campaignId) {
+    const today = new Date().toISOString().split('T')[0];
+
+    const [baselines, snapshots] = await Promise.all([
+      sbFetch('campaign_baselines', `select=*&campaign_id=eq.${campaignId}`),
+      sbFetch('campaign_snapshots', `select=*&campaign_id=eq.${campaignId}&snapshot_date=eq.${today}`)
+    ]);
+
+    if (!baselines.length || !snapshots.length) return [];
+
+    const snap = snapshots[0];
+    const newAlerts = [];
+
+    for (const bl of baselines) {
+      const actual = parseFloat(snap[bl.metric]);
+      if (actual == null || isNaN(actual)) continue;
+
+      const threshold = parseFloat(bl.alert_threshold) || -10;
+      const pctChange = ((actual - bl.baseline_value) / bl.baseline_value) * 100;
+
+      if (pctChange < threshold) {
+        const severity = pctChange < threshold * 2 ? 'critical' : 'warning';
+        const alert = {
+          campaign_id: campaignId,
+          alert_date: today,
+          metric: bl.metric,
+          baseline_value: bl.baseline_value,
+          actual_value: actual,
+          pct_change: Math.round(pctChange * 100) / 100,
+          severity
+        };
+        await sbInsert('campaign_alerts', alert);
+        newAlerts.push(alert);
+      }
+    }
+
+    return newAlerts;
+  }
+
+  // Get unacknowledged alerts
+  async function getHealthAlerts(campaignId) {
+    return sbFetch('campaign_alerts',
+      `select=*&campaign_id=eq.${campaignId}&acknowledged=eq.false&order=alert_date.desc`
+    );
+  }
+
+  // Acknowledge an alert
+  async function acknowledgeAlert(alertId) {
+    return sbUpdate('campaign_alerts', `id=eq.${alertId}`, { acknowledged: true });
+  }
+
+  // Get health chart data (snapshots + baselines for charting)
+  async function getHealthChart(campaignId, days = 30) {
+    const since = new Date(Date.now() - days * 86400000).toISOString().split('T')[0];
+    const [snapshots, baselines] = await Promise.all([
+      sbFetch('campaign_snapshots', `select=*&campaign_id=eq.${campaignId}&snapshot_date=gte.${since}&order=snapshot_date.asc`),
+      sbFetch('campaign_baselines', `select=*&campaign_id=eq.${campaignId}`)
+    ]);
+    return { snapshots, baselines };
+  }
+
+  // Run full daily health check (snapshot + alert check)
+  async function runDailyHealthCheck(campaignId) {
+    await captureHealthSnapshot(campaignId);
+    const alerts = await checkHealthAlerts(campaignId);
+    return alerts;
+  }
+
   return {
     getActiveCampaign,
     getCampaignHistory,
@@ -297,7 +417,13 @@ const CampaignTracker = (() => {
     implementItem,
     setCampaignStatus,
     getCampaignName,
-    fmt$
+    fmt$,
+    captureHealthSnapshot,
+    checkHealthAlerts,
+    getHealthAlerts,
+    acknowledgeAlert,
+    getHealthChart,
+    runDailyHealthCheck
   };
 })();
 

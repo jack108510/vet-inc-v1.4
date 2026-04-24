@@ -1236,11 +1236,50 @@
       <div class="progress-bar-wrap"><div class="progress-bar"><div class="fill" id="c3ProgressFill" style="width:0%"></div></div></div>
       <div class="progress-label" id="c3ProgressLabel">0/0 implemented</div>
       <button class="btn-analytics" onclick="openCampaignAnalytics('micro-margin')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></svg> Analytics</button>
-     </div></div></div><div id="c3Summary" style="display:flex;gap:2rem;padding:1rem 1.75rem;border-bottom:1px solid var(--border);background:#f8faff;flex-wrap:wrap"></div><button class="campaign-toggle" onclick="toggleCampaign(this)">See More <span class="toggle-arrow">&#9662;</span></button><div class="campaign-body"><div class="table-scroll"><table><thead><tr><th>Item</th><th class="num">Price Increase</th><th class="num">Current &rarr; +5% Bump</th><th class="num">Annual Volume</th><th class="num">Extra Margin / Year</th></tr></thead><tbody id="c3Table"></tbody></table></div></div></div><!-- Campaign 4: Shoppables — Exam Drop + Pairing Uplift --><div class="campaign-card" style="border-left:4px solid #f59e0b"><div class="campaign-header"><div class="campaign-icon" style="background:linear-gradient(135deg,#f59e0b,#fbbf24)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg></div><div class="campaign-meta"><div class="campaign-title">Shoppables — Exam Drop + Pairing Uplift</div><div class="campaign-desc">Drop exam prices by $15 to attract more patients, then offset the loss by bumping the items most commonly paired with exams. Volume-based pairings from 2025 transaction data.</div><div class="campaign-status" id="c4Status">
+     </div></div></div><div id="c3Summary" style="display:flex;gap:2rem;padding:1rem 1.75rem;border-bottom:1px solid var(--border);background:#f8faff;flex-wrap:wrap"></div><button class="campaign-toggle" onclick="toggleCampaign(this)">See More <span class="toggle-arrow">&#9662;</span></button><div class="campaign-body"><div class="table-scroll"><table><thead><tr><th>Item</th><th class="num">Price Increase</th><th class="num">Current &rarr; +5% Bump</th><th class="num">Annual Volume</th><th class="num">Extra Margin / Year</th></tr></thead><tbody id="c3Table"></tbody></table></div></div></div><!-- Campaign 4: Shoppables — Initiative Dashboard --><div class="campaign-card" style="border-left:4px solid #f59e0b"><div class="campaign-header"><div class="campaign-icon" style="background:linear-gradient(135deg,#f59e0b,#fbbf24)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg></div><div class="campaign-meta"><div class="campaign-title">Shoppables — Exam Drop Initiative</div><div class="campaign-desc">Drop exam prices to attract new patients. Track real lost revenue from drops, gained revenue from pairings, new client growth, and break-even progress.</div><div class="campaign-status" id="c4Status">
 <span class="badge active" id="c4StatusBadge"><span>&#10003;</span> Active</span>
-<button id="c4ActivateBtn" style="display:none" onclick="activateCampaign('shoppables')">▶ Activate</button>
-<div id="c4Progress" style="display:flex;align-items:center;gap:8px;margin-top:6px"><div style="flex:1;height:6px;background:#e2e8f0;border-radius:3px;overflow:hidden"><div id="c4ProgressFill" style="height:100%;background:var(--green);width:0%;border-radius:3px;transition:width 0.5s"></div></div><span id="c4ProgressLabel" style="font-size:0.72rem;color:var(--muted);white-space:nowrap">0/0</span></div>
-     </div></div></div><div id="c4Summary" style="display:flex;gap:2rem;padding:1rem 1.75rem;border-bottom:1px solid var(--border);background:#fffbeb;flex-wrap:wrap"></div><button class="campaign-toggle" onclick="toggleCampaign(this)">See More <span class="toggle-arrow">&#9662;</span></button><div class="campaign-body"><div style="padding:0.6rem 1.75rem;border-bottom:1px solid var(--border);display:flex;gap:0.5rem;align-items:center;flex-wrap:wrap"><span style="font-size:0.72rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-right:0.5rem">Filter:</span><button class="c1-filter active" onclick="c4Filter(this,'all')">All</button><button class="c1-filter" onclick="c4Filter(this,'drops')">Exam Drops</button><button class="c1-filter" onclick="c4Filter(this,'bumps')">Pairing Bumps</button></div><div class="table-scroll"><table><thead><tr><th>Code</th><th>Description</th><th class="num">Type</th><th class="num">Current Price</th><th class="num">New Price</th><th class="num">Delta</th><th class="num">Annual Volume</th><th class="num">Impact / yr</th></tr></thead><tbody id="c4Table"></tbody></table></div></div></div></div></section><!--
+     </div></div></div>
+
+<!-- KPI Cards -->
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;padding:1rem 1.75rem;border-bottom:1px solid var(--border);background:#fffbeb" id="c4KPIs">
+  <div style="text-align:center"><div style="font-size:0.68rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em">New Clients</div><div style="font-size:1.5rem;font-weight:900;color:var(--primary)" id="c4NewClients">—</div><div style="font-size:0.65rem;color:var(--muted)">since launch</div></div>
+  <div style="text-align:center"><div style="font-size:0.68rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em">Revenue Lost</div><div style="font-size:1.5rem;font-weight:900;color:var(--red)" id="c4RevenueLost">—</div><div style="font-size:0.65rem;color:var(--muted)">exam drops</div></div>
+  <div style="text-align:center"><div style="font-size:0.68rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em">Revenue Gained</div><div style="font-size:1.5rem;font-weight:900;color:var(--green)" id="c4RevenueGained">—</div><div style="font-size:0.65rem;color:var(--muted)">pairing bumps</div></div>
+  <div style="text-align:center"><div style="font-size:0.68rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em">Net P&L</div><div style="font-size:1.5rem;font-weight:900" id="c4NetPnL">—</div><div style="font-size:0.65rem;color:var(--muted)">combined</div></div>
+</div>
+
+<!-- Break-even Progress -->
+<div style="padding:0.75rem 1.75rem;border-bottom:1px solid var(--border);background:#fffbeb">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+    <div style="font-size:0.78rem;font-weight:700;color:var(--text)">Break-Even Progress</div>
+    <span style="font-size:0.72rem;font-weight:700" id="c4BreakEvenPct">0%</span>
+  </div>
+  <div style="height:10px;background:#e2e8f0;border-radius:5px;overflow:hidden">
+    <div id="c4BreakEvenBar" style="height:100%;background:linear-gradient(90deg,var(--red),#fbbf24,var(--green));width:0%;border-radius:5px;transition:width 0.8s"></div>
+  </div>
+  <div style="display:flex;justify-content:space-between;margin-top:4px;font-size:0.65rem;color:var(--muted)">
+    <span id="c4BreakEvenLeft">$0 recovered</span>
+    <span id="c4BreakEvenTarget">Target: $0</span>
+  </div>
+</div>
+
+<!-- Exam Volume Trend -->
+<div style="padding:0.75rem 1.75rem;border-bottom:1px solid var(--border)">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+    <div style="font-size:0.78rem;font-weight:700;color:var(--text)">Exam Volume — Before vs After</div>
+    <span style="font-size:0.65rem;color:var(--muted)" id="c4ExamAvg">Baseline: —/wk → Current: —/wk</span>
+  </div>
+  <canvas id="c4ExamChart" height="80" style="width:100%"></canvas>
+</div>
+
+<!-- Top Pairing Performance -->
+<div style="padding:0.75rem 1.75rem">
+  <div style="font-size:0.78rem;font-weight:700;color:var(--text);margin-bottom:8px">Top Pairing Items (by volume with exams)</div>
+  <div id="c4Pairings" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px"></div>
+</div>
+
+<button class="campaign-toggle" onclick="toggleCampaign(this)">See Price List <span class="toggle-arrow">&#9662;</span></button>
+<div class="campaign-body" style="display:none"><div style="padding:0.6rem 1.75rem;border-bottom:1px solid var(--border);display:flex;gap:0.5rem;align-items:center;flex-wrap:wrap"><span style="font-size:0.72rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-right:0.5rem">Filter:</span><button class="c1-filter active" onclick="c4Filter(this,'all')">All</button><button class="c1-filter" onclick="c4Filter(this,'drops')">Exam Drops</button><button class="c1-filter" onclick="c4Filter(this,'bumps')">Pairing Bumps</button></div><div class="table-scroll"><table><thead><tr><th>Code</th><th>Description</th><th class="num">Type</th><th class="num">Current</th><th class="num">New</th><th class="num">Delta</th><th class="num">Vol / yr</th><th class="num">Impact / yr</th></tr></thead><tbody id="c4Table"></tbody></table></div></div></div></div></section><!--
  SECTION 3: Inventory Intelligence (Coming Soon)
  --><section id="tab-inventory" class="section"><div style="min-height:60vh;display:flex;align-items:center;justify-content:center;background:#eff6ff"><div style="background:#fff;border-radius:16px;box-shadow:0 2px 16px rgba(37,99,235,0.08);padding:3rem 4rem;text-align:center;max-width:520px"><div style="font-size:3rem;margin-bottom:1rem">🔒</div><div style="font-size:1.4rem;font-weight:700;color:#1e293b;margin-bottom:0.5rem">Inventory Intelligence Locked</div><div style="font-size:0.95rem;color:#94a3b8">Temporarily locked while we audit COGS and revenue data.</div></div></div></section><!--
  SECTION 4: Insights & Actions
@@ -5095,44 +5134,168 @@ window.c3Items = [];
 
 // ===== SHOOPABLES CAMPAIGN LOADER =====
 window.c4Items = [];
+let c4ExamChartInstance = null;
+
 async function loadShoppables() {
   try {
+    // 1. Get campaign
     const res = await fetch(SB_URL + '/rest/v1/campaigns?select=*&clinic_id=eq.rosslyn&campaign_type=eq.shoppables&status=eq.active&limit=1', {
       headers: { apikey: SB_KEY, Authorization: 'Bearer ' + SB_KEY }
     });
     const camps = await res.json();
     if (!camps || !camps.length) return;
     const camp = camps[0];
+    const launchDate = (camp.activated_at || camp.created_at).split('T')[0];
 
+    // 2. Get campaign items
     const itemsRes = await fetch(SB_URL + '/rest/v1/campaign_items?select=*&campaign_id=eq.' + camp.id + '&order=potential_uplift.desc', {
       headers: { apikey: SB_KEY, Authorization: 'Bearer ' + SB_KEY }
     });
     const items = await itemsRes.json();
     if (!items || !items.length) return;
-
     window.c4Items = items;
 
-    // Summary
     const drops = items.filter(i => i.potential_uplift < 0);
     const bumps = items.filter(i => i.potential_uplift >= 0);
-    const totalLoss = Math.abs(drops.reduce((s, i) => s + i.potential_uplift, 0));
-    const totalGain = bumps.reduce((s, i) => s + i.potential_uplift, 0);
-    const net = totalGain - totalLoss;
-    const summary = document.getElementById('c4Summary');
-    if (summary) {
-      summary.innerHTML = `
-        <div><div style="font-size:0.72rem;color:var(--muted)">Exam Loss</div><div style="font-size:1.1rem;font-weight:800;color:var(--red)">-$${totalLoss.toLocaleString('en-US',{maximumFractionDigits:0})}</div><div style="font-size:0.68rem;color:var(--muted)">${drops.length} items dropped</div></div>
-        <div><div style="font-size:0.72rem;color:var(--muted)">Pairing Gain</div><div style="font-size:1.1rem;font-weight:800;color:var(--green)">+$${totalGain.toLocaleString('en-US',{maximumFractionDigits:0})}</div><div style="font-size:0.68rem;color:var(--muted)">${bumps.length} items bumped</div></div>
-        <div><div style="font-size:0.72rem;color:var(--muted)">Net / yr</div><div style="font-size:1.1rem;font-weight:800;color:${net>=0?'var(--green)':'var(--red)'}">${net>=0?'+':''}$${net.toLocaleString('en-US',{maximumFractionDigits:0})}</div><div style="font-size:0.68rem;color:var(--muted)">${(totalGain/totalLoss*100).toFixed(0)}% coverage</div></div>
-      `;
-    }
+    const totalTheoreticalLoss = Math.abs(drops.reduce((s, i) => s + i.potential_uplift, 0));
+    const totalTheoreticalGain = bumps.reduce((s, i) => s + i.potential_uplift, 0);
 
-    // Table
+    // 3. Count new clients since launch (clients whose first visit is after launch)
+    const today = new Date().toISOString().split('T')[0];
+    
+    // Get all visits before launch to find existing clients
+    const { count: preVisitCount } = await (await fetch(SB_URL + '/rest/v1/visits?select=ref_id&visit_date=lt.' + launchDate + '&limit=1', {
+      headers: { ...{ apikey: SB_KEY, Authorization: 'Bearer ' + SB_KEY }, Prefer: 'count=exact' }
+    })).json().then(d => ({ count: 0 })).catch(() => ({ count: 0 }));
+    
+    // Simpler: count distinct clients with visits before launch, vs total distinct clients
+    // Use RPC or just count new visit ref_ids since launch
+    let newClientsSinceLaunch = 0;
+    try {
+      // Get clients who visited before launch
+      let preClients = new Set();
+      for (let off = 0; off < 100000; off += 1000) {
+        const r = await fetch(SB_URL + '/rest/v1/visits?select=ref_id&visit_date=lt.' + launchDate + '&offset=' + off + '&limit=1000', {
+          headers: { apikey: SB_KEY, Authorization: 'Bearer ' + SB_KEY }
+        });
+        const d = await r.json();
+        if (!d || !d.length) break;
+        d.forEach(v => { if (v.ref_id) preClients.add(v.ref_id); });
+      }
+      
+      // Get clients who visited since launch
+      let postClients = new Set();
+      for (let off = 0; off < 100000; off += 1000) {
+        const r = await fetch(SB_URL + '/rest/v1/visits?select=ref_id&visit_date=gte.' + launchDate + '&offset=' + off + '&limit=1000', {
+          headers: { apikey: SB_KEY, Authorization: 'Bearer ' + SB_KEY }
+        });
+        const d = await r.json();
+        if (!d || !d.length) break;
+        d.forEach(v => { if (v.ref_id) postClients.add(v.ref_id); });
+      }
+      
+      // New = post clients not in pre clients
+      postClients.forEach(c => { if (!preClients.has(c)) newClientsSinceLaunch++; });
+    } catch (e) { console.warn('New client count failed:', e); }
+
+    // 4. Exam volume: before vs after
+    let preExamCount = 0, postExamCount = 0;
+    try {
+      const { count: preExams } = await fetch(SB_URL + '/rest/v1/services?select=id&in(code).(%22HC%22,%22HEF%22)&service_date=lt.' + launchDate, {
+        headers: { ...{ apikey: SB_KEY, Authorization: 'Bearer ' + SB_KEY }, Prefer: 'count=exact' }
+      }).then(r => r.json()).then(() => 0).catch(() => 0);
+      
+      // Use direct count queries
+      const preData = await fetch(SB_URL + '/rest/v1/services?select=id&in(code).(%22HC%22,%22HEF%22)&service_date=gte.2025-01-01&service_date=lt.' + launchDate, {
+        headers: { apikey: SB_KEY, Authorization: 'Bearer ' + SB_KEY }
+      }).then(r => r.json());
+      preExamCount = preData?.length || 0;
+      
+      const postData = await fetch(SB_URL + '/rest/v1/services?select=id&in(code).(%22HC%22,%22HEF%22)&service_date=gte.' + launchDate, {
+        headers: { apikey: SB_KEY, Authorization: 'Bearer ' + SB_KEY }
+      }).then(r => r.json());
+      postExamCount = postData?.length || 0;
+    } catch (e) { console.warn('Exam count failed:', e); }
+
+    // Calculate weeks for rate
+    const launch = new Date(launchDate);
+    const now = new Date();
+    const weeksSinceLaunch = Math.max(1, (now - launch) / (7 * 86400000));
+    const weeksBeforeLaunch = 52; // use full year baseline
+    const baselinePerWk = preExamCount / weeksBeforeLaunch;
+    const currentPerWk = postExamCount / weeksSinceLaunch;
+
+    // 5. Render KPIs
+    document.getElementById('c4NewClients').textContent = newClientsSinceLaunch;
+    document.getElementById('c4RevenueLost').textContent = '-$' + totalTheoreticalLoss.toLocaleString('en-US', { maximumFractionDigits: 0 });
+    document.getElementById('c4RevenueGained').textContent = '+$' + totalTheoreticalGain.toLocaleString('en-US', { maximumFractionDigits: 0 });
+    const net = totalTheoreticalGain - totalTheoreticalLoss;
+    const netEl = document.getElementById('c4NetPnL');
+    netEl.textContent = (net >= 0 ? '+' : '') + '$' + net.toLocaleString('en-US', { maximumFractionDigits: 0 });
+    netEl.style.color = net >= 0 ? 'var(--green)' : 'var(--red)';
+
+    // 6. Break-even bar
+    const pct = Math.min(100, (totalTheoreticalGain / totalTheoreticalLoss) * 100);
+    document.getElementById('c4BreakEvenBar').style.width = pct + '%';
+    document.getElementById('c4BreakEvenPct').textContent = pct.toFixed(0) + '%';
+    document.getElementById('c4BreakEvenPct').style.color = pct >= 100 ? 'var(--green)' : 'var(--orange)';
+    document.getElementById('c4BreakEvenLeft').textContent = '$' + totalTheoreticalGain.toLocaleString('en-US', { maximumFractionDigits: 0 }) + ' recovered';
+    document.getElementById('c4BreakEvenTarget').textContent = 'Target: $' + totalTheoreticalLoss.toLocaleString('en-US', { maximumFractionDigits: 0 });
+
+    // 7. Exam volume
+    document.getElementById('c4ExamAvg').textContent = 'Baseline: ' + baselinePerWk.toFixed(1) + '/wk → Current: ' + currentPerWk.toFixed(1) + '/wk';
+    drawExamChart(baselinePerWk, currentPerWk);
+
+    // 8. Top pairings (mini cards)
+    const topPairings = bumps.slice(0, 8);
+    document.getElementById('c4Pairings').innerHTML = topPairings.map(p => {
+      const pctGain = ((p.suggested_price - p.old_price) / p.old_price * 100).toFixed(1);
+      return '<div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:8px 10px">' +
+        '<div style="font-size:0.68rem;color:var(--muted);font-weight:600">' + escHtml(p.treatment_code) + '</div>' +
+        '<div style="font-size:0.78rem;font-weight:700;color:var(--text);margin:2px 0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + escHtml(p.treatment_name || '') + '</div>' +
+        '<div style="display:flex;justify-content:space-between;font-size:0.7rem">' +
+          '<span style="color:var(--green);font-weight:600">+' + pctGain + '%</span>' +
+          '<span style="color:var(--muted)">' + p.annual_volume + '/yr</span>' +
+        '</div></div>';
+    }).join('');
+
+    // 9. Price list table (hidden by default)
     renderC4Table(items, 'all');
+
   } catch (e) {
     console.error('Shoppables load failed:', e);
     document.getElementById('c4Table').innerHTML = '<tr><td colspan="8" style="color:var(--red)">Error: ' + e.message + '</td></tr>';
   }
+}
+
+function drawExamChart(baseline, current) {
+  const canvas = document.getElementById('c4ExamChart');
+  if (!canvas) return;
+  if (c4ExamChartInstance) c4ExamChartInstance.destroy();
+  
+  // Simple bar comparison
+  const maxVal = Math.max(baseline, current) * 1.2;
+  c4ExamChartInstance = new Chart(canvas, {
+    type: 'bar',
+    data: {
+      labels: ['Baseline (pre-launch)', 'Current (post-launch)'],
+      datasets: [{
+        data: [baseline.toFixed(1), current.toFixed(1)],
+        backgroundColor: ['#94a3b8', current >= baseline ? '#16a34a' : '#ef4444'],
+        borderRadius: 6,
+        barThickness: 40
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => ctx.parsed.y + ' exams/week' } } },
+      scales: {
+        x: { grid: { display: false }, ticks: { font: { size: 11 } } },
+        y: { grid: { color: '#f1f5f9' }, ticks: { font: { size: 10 } }, suggestedMax: maxVal }
+      }
+    }
+  });
 }
 
 function renderC4Table(items, filter) {

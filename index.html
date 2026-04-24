@@ -1243,23 +1243,6 @@
  --><section id="tab-insights" class="section">
 <div class="insight-inbox">
   <div class="settings-card-title">Insights Inbox</div>
-  <div class="insight-item" onclick="this.classList.toggle('open')">
-    <div class="insight-title">Mar 12 — Margin was 8%</div>
-    <div class="insight-body">Too many doctors scheduled on a day with low‑value appointments.</div>
-    <div class="insight-actions">
-      <span class="insight-pill">Set alert if repeats</span>
-      <span class="insight-pill">Acknowledge</span>
-    </div>
-    <div class="insight-detail">Full report: root cause, timeline, and recommended fix. (placeholder)</div>
-  </div>
-  <div class="insight-item" onclick="this.classList.toggle('open')">
-    <div class="insight-title">Pricing anomaly — 12 items below inflation target</div>
-    <div class="insight-body">Queue Inflation Adjustment campaign for affected items.</div>
-    <div class="insight-actions">
-      <span class="insight-pill">Alert on repeat</span>
-      <span class="insight-pill">Queue fix</span>
-    </div>
-  </div>
 </div>
 <div style="padding:1.5rem 1.75rem">
 <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem">
@@ -5607,16 +5590,16 @@ function closeImplement(){
   const m=document.getElementById('implementModal');
   if(m) m.style.display='none';
 }
-</script><script src="js/healthWidget.js"></script><script>
-// Hook health alerts into Insights inbox
+</script><script src="js/insightsEngine.js"></script><script src="js/healthWidget.js"></script><script>
+// Hook insights loading into tab switches
 (function(){
   var _origShowTab = window.showTab;
   window.showTab = function(name, btn) {
     _origShowTab(name, btn);
-    if (name === 'insights') CampaignHealth.loadInsightAlerts();
+    if (name === 'insights') InsightsEngine.load();
   };
   document.addEventListener('DOMContentLoaded', function() {
-    setTimeout(function() { CampaignHealth.loadInsightAlerts(); }, 2000);
+    setTimeout(function() { InsightsEngine.load(); }, 2000);
   });
 })();
 </script>

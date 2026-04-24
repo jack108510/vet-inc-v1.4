@@ -512,6 +512,16 @@ const CampaignTracker = (() => {
             pct_change: Math.round(pctChange * 100) / 100,
             severity: pctChange < -30 ? 'critical' : 'warning'
           });
+          // Also write to insights inbox
+          if (typeof InsightsEngine !== 'undefined') {
+            await InsightsEngine.create({
+              source: 'campaign_alert',
+              severity: pctChange < -30 ? 'critical' : 'warning',
+              title: `${code} volume dropped ${Math.round(pctChange)}%`,
+              body: `Actual: ${todayVolume.toFixed(1)}/day vs Baseline: ${volBaseline.baseline_value.toFixed(1)}/day (${today})`,
+              detail: 'This item\'s volume dropped after a price change. Baseline captured from the 90 days before the change was applied.'
+            });
+          }
           newAlerts.push({ code, metric: 'volume', pct: pctChange });
         }
       }
@@ -529,6 +539,16 @@ const CampaignTracker = (() => {
             pct_change: Math.round(pctChange * 100) / 100,
             severity: pctChange < -30 ? 'critical' : 'warning'
           });
+          // Also write to insights inbox
+          if (typeof InsightsEngine !== 'undefined') {
+            await InsightsEngine.create({
+              source: 'campaign_alert',
+              severity: pctChange < -30 ? 'critical' : 'warning',
+              title: `${code} revenue dropped ${Math.round(pctChange)}%`,
+              body: `Actual: $${todayRevenue.toFixed(2)}/day vs Baseline: $${revBaseline.baseline_value.toFixed(2)}/day (${today})`,
+              detail: 'This item\'s revenue dropped after a price change. Baseline captured from the 90 days before the change was applied.'
+            });
+          }
           newAlerts.push({ code, metric: 'revenue', pct: pctChange });
         }
       }

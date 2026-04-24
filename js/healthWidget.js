@@ -349,19 +349,20 @@ const CampaignHealth = (() => {
     // Insert after the title
     const titleEl = inbox.querySelector('.settings-card-title');
     const alertHtml = alerts.map(a => {
-      const m = METRICS.find(x => x.key === a.metric) || { label: a.metric, fmt: v => v };
+      const label = formatMetricLabel(a.metric);
       const pct = parseFloat(a.pct_change).toFixed(1);
       const icon = pct < 0 ? '🔴' : '🟢';
       const severity = a.severity === 'critical' ? 'CRITICAL' : 'WARNING';
       const sevColor = a.severity === 'critical' ? '#ef4444' : '#ea580c';
+      const campaign = a._campaignName || 'Campaign';
       return `<div class="insight-item health-alert-insight" onclick="this.classList.toggle('open')" style="border-left:3px solid ${sevColor}">
-        <div class="insight-title">${icon} Campaign Health — ${m.label} dropped ${pct}%</div>
-        <div class="insight-body">Actual: ${m.fmt(a.actual_value)} vs Baseline: ${m.fmt(a.baseline_value)} (${a.alert_date})</div>
+        <div class="insight-title">${icon} ${label} dropped ${pct}%</div>
+        <div class="insight-body">${campaign} — Actual: ${formatMetricValue(a.metric, a.actual_value)} vs Baseline: ${formatMetricValue(a.metric, a.baseline_value)} (${a.alert_date})</div>
         <div class="insight-actions">
           <span class="insight-pill" style="background:${sevColor}15;color:${sevColor}">${severity}</span>
           <span class="insight-pill" style="cursor:pointer" onclick="event.stopPropagation();CampaignHealth.acknowledgeAlert('${a.id}')">Acknowledge</span>
         </div>
-        <div class="insight-detail">This metric has dropped below the alert threshold. Check the Campaign Health tab for the full before/after chart and trend analysis.</div>
+        <div class="insight-detail">This item's performance dropped after a price change. The baseline was captured from the 90 days before the change was applied.</div>
       </div>`;
     }).join('');
 
@@ -382,20 +383,36 @@ const CampaignHealth = (() => {
   async function loadInsightAlerts() {
     try {
       // Get all active campaigns
-      const campaigns = await sbGet('campaigns', 'select=id&clinic_id=eq.rosslyn&status=eq.active');
+      const campaigns = await sbGet('campaigns', 'select=id,name&clinic_id=eq.rosslyn&status=eq.active');
       if (!campaigns.length) return;
 
-      const ids = campaigns.map(c => c.id);
-      // Fetch all unacknowledged alerts for active campaigns
       const allAlerts = [];
-      for (const cid of ids) {
-        const alerts = await sbGet('campaign_alerts', `select=*&campaign_id=eq.${cid}&acknowledged=eq.false&order=alert_date.desc&limit=10`);
+      for (const c of campaigns) {
+        const alerts = await sbGet('campaign_alerts', `select=*&campaign_id=eq.${c.id}&acknowledged=eq.false&order=alert_date.desc&limit=10`);
+        alerts.forEach(a => a._campaignName = c.name);
         allAlerts.push(...alerts);
       }
       injectInsightAlerts(allAlerts);
     } catch (e) {
       console.error('Failed to load insight alerts', e);
     }
+  }
+
+  function formatMetricLabel(metric) {
+    if (metric.startsWith('item_')) {
+      const parts = metric.replace('item_', '').split('_');
+      const code = parts[0];
+      const type = parts.slice(1).join('_');
+      const typeLabel = type === 'daily_volume' ? 'Volume' : type === 'daily_revenue' ? 'Revenue' : type === 'avg_price' ? 'Avg Price' : type;
+      return `${code} ${typeLabel}`;
+    }
+    const m = METRICS.find(x => x.key === metric);
+    return m ? m.label : metric;
+  }
+
+  function formatMetricValue(metric, value) {
+    if (metric.includes('revenue') || metric.includes('price')) return '$' + (value||0).toFixed(2);
+    return (value||0).toFixed(1);
   }
 
   return { init, refresh, setMetric, captureBaseline, acknowledgeAlert, loadInsightAlerts };})();

@@ -191,6 +191,9 @@ const CampaignTracker = (() => {
           newImplemented++;
           newCaptured += capturedUplift;
 
+          // Auto-capture baseline for this item when price changes
+          await autoCaptureItemBaseline(campaignId, item);
+
           // Log event
           await sbInsert('campaign_history', {
             campaign_id: campaignId,
@@ -406,6 +409,150 @@ const CampaignTracker = (() => {
     return alerts;
   }
 
+  // --- Item-Level Auto-Tracking ---
+  // When a price change is detected, auto-capture baseline for that specific item
+
+  async function autoCaptureItemBaseline(campaignId, item) {
+    const today = new Date().toISOString().split('T')[0];
+    const code = item.treatment_code;
+
+    // Check if baseline already exists for this item
+    const existing = await sbFetch('campaign_baselines',
+      `select=id&campaign_id=eq.${campaignId}&metric=like.item_${code}_%`
+    );
+    if (existing.length) return; // Already captured
+
+    // Calculate 90-day baseline for this specific item
+    const since = new Date(Date.now() - 90 * 86400000).toISOString().split('T')[0];
+
+    const [itemHistory, visitsSince] = await Promise.all([
+      sbFetch('services', `select=amount,service_date&description=like.*${code}*&service_date=gte.${since}`),
+      sbFetch('visits', `select=visit_date&visit_date=gte.${since}`)
+    ]);
+
+    // Volume: how many times this item was used per day
+    const byDay = {};
+    let totalRev = 0;
+    for (const s of itemHistory) {
+      const d = s.service_date;
+      if (!d) continue;
+      if (!byDay[d]) byDay[d] = { count: 0, revenue: 0 };
+      byDay[d].count++;
+      byDay[d].revenue += parseFloat(s.amount) || 0;
+      totalRev += parseFloat(s.amount) || 0;
+    }
+    const days = Object.keys(byDay).length || 1;
+    const avgDailyVolume = Object.values(byDay).reduce((s, d) => s + d.count, 0) / days;
+    const avgDailyRevenue = totalRev / days;
+    const avgPrice = avgDailyVolume > 0 ? avgDailyRevenue / avgDailyVolume : item.old_price;
+
+    // Visit days for context
+    const visitDays = new Set(visitsSince.map(v => v.visit_date)).size || 1;
+    const visitsPerDay = visitsSince.length / visitDays;
+
+    const baselines = [
+      { campaign_id: campaignId, metric: `item_${code}_daily_volume`, baseline_value: Math.round(avgDailyVolume * 100) / 100, baseline_period: '90d' },
+      { campaign_id: campaignId, metric: `item_${code}_daily_revenue`, baseline_value: Math.round(avgDailyRevenue * 100) / 100, baseline_period: '90d' },
+      { campaign_id: campaignId, metric: `item_${code}_avg_price`, baseline_value: Math.round(avgPrice * 100) / 100, baseline_period: '90d' },
+    ];
+
+    for (const b of baselines) {
+      await sbInsert('campaign_baselines', b);
+    }
+
+    // Log it
+    await sbInsert('campaign_history', {
+      campaign_id: campaignId,
+      event_type: 'baseline_captured',
+      event_data: { code, item: item.treatment_name, avgDailyVolume, avgDailyRevenue, avgPrice }
+    });
+  }
+
+  // Daily check: compare implemented items' actuals vs their baselines
+  async function checkItemHealth(campaignId) {
+    const today = new Date().toISOString().split('T')[0];
+
+    // Get all implemented items for this campaign
+    const items = await sbFetch('campaign_items',
+      `select=*&campaign_id=eq.${campaignId}&status=eq.implemented`
+    );
+    if (!items.length) return [];
+
+    // Get baselines for this campaign's items
+    const baselines = await sbFetch('campaign_baselines', `select=*&campaign_id=eq.${campaignId}`);
+    if (!baselines.length) return [];
+
+    const newAlerts = [];
+
+    for (const item of items) {
+      const code = item.treatment_code;
+
+      // Get today's actuals for this item
+      const todayData = await sbFetch('services',
+        `select=amount&description=like.*${code}*&service_date=eq.${today}`
+      );
+
+      const todayVolume = todayData.length;
+      const todayRevenue = todayData.reduce((s, r) => s + (parseFloat(r.amount) || 0), 0);
+
+      // Compare against baselines
+      const volBaseline = baselines.find(b => b.metric === `item_${code}_daily_volume`);
+      const revBaseline = baselines.find(b => b.metric === `item_${code}_daily_revenue`);
+
+      // Check volume
+      if (volBaseline && volBaseline.baseline_value > 0) {
+        const pctChange = ((todayVolume - volBaseline.baseline_value) / volBaseline.baseline_value) * 100;
+        if (pctChange < (volBaseline.alert_threshold || -20)) {
+          await sbInsert('campaign_alerts', {
+            campaign_id: campaignId,
+            alert_date: today,
+            metric: `item_${code}_daily_volume`,
+            baseline_value: volBaseline.baseline_value,
+            actual_value: todayVolume,
+            pct_change: Math.round(pctChange * 100) / 100,
+            severity: pctChange < -30 ? 'critical' : 'warning'
+          });
+          newAlerts.push({ code, metric: 'volume', pct: pctChange });
+        }
+      }
+
+      // Check revenue
+      if (revBaseline && revBaseline.baseline_value > 0) {
+        const pctChange = ((todayRevenue - revBaseline.baseline_value) / revBaseline.baseline_value) * 100;
+        if (pctChange < (revBaseline.alert_threshold || -20)) {
+          await sbInsert('campaign_alerts', {
+            campaign_id: campaignId,
+            alert_date: today,
+            metric: `item_${code}_daily_revenue`,
+            baseline_value: revBaseline.baseline_value,
+            actual_value: todayRevenue,
+            pct_change: Math.round(pctChange * 100) / 100,
+            severity: pctChange < -30 ? 'critical' : 'warning'
+          });
+          newAlerts.push({ code, metric: 'revenue', pct: pctChange });
+        }
+      }
+
+      // Write daily snapshot for this item
+      await sbInsert('campaign_snapshots', {
+        campaign_id: campaignId,
+        snapshot_date: today,
+        implemented_count: items.length,
+        total_count: items.length,
+        captured_revenue: todayRevenue,
+        potential_revenue: 0,
+        daily_revenue: todayRevenue,
+        daily_visits: todayVolume,
+        exam_count: 0,
+        exam_revenue: 0,
+        avg_visit_value: todayVolume > 0 ? todayRevenue / todayVolume : 0,
+        unique_clients: 0
+      });
+    }
+
+    return newAlerts;
+  }
+
   return {
     getActiveCampaign,
     getCampaignHistory,
@@ -423,7 +570,9 @@ const CampaignTracker = (() => {
     getHealthAlerts,
     acknowledgeAlert,
     getHealthChart,
-    runDailyHealthCheck
+    runDailyHealthCheck,
+    autoCaptureItemBaseline,
+    checkItemHealth
   };
 })();
 

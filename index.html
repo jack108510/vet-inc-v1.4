@@ -1236,7 +1236,11 @@
       <div class="progress-bar-wrap"><div class="progress-bar"><div class="fill" id="c3ProgressFill" style="width:0%"></div></div></div>
       <div class="progress-label" id="c3ProgressLabel">0/0 implemented</div>
       <button class="btn-analytics" onclick="openCampaignAnalytics('micro-margin')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></svg> Analytics</button>
-     </div></div></div><div id="c3Summary" style="display:flex;gap:2rem;padding:1rem 1.75rem;border-bottom:1px solid var(--border);background:#f8faff;flex-wrap:wrap"></div><button class="campaign-toggle" onclick="toggleCampaign(this)">See More <span class="toggle-arrow">&#9662;</span></button><div class="campaign-body"><div class="table-scroll"><table><thead><tr><th>Item</th><th class="num">Price Increase</th><th class="num">Current &rarr; +5% Bump</th><th class="num">Annual Volume</th><th class="num">Extra Margin / Year</th></tr></thead><tbody id="c3Table"></tbody></table></div></div></div></div></section><!--
+     </div></div></div><div id="c3Summary" style="display:flex;gap:2rem;padding:1rem 1.75rem;border-bottom:1px solid var(--border);background:#f8faff;flex-wrap:wrap"></div><button class="campaign-toggle" onclick="toggleCampaign(this)">See More <span class="toggle-arrow">&#9662;</span></button><div class="campaign-body"><div class="table-scroll"><table><thead><tr><th>Item</th><th class="num">Price Increase</th><th class="num">Current &rarr; +5% Bump</th><th class="num">Annual Volume</th><th class="num">Extra Margin / Year</th></tr></thead><tbody id="c3Table"></tbody></table></div></div></div><!-- Campaign 4: Shoppables — Exam Drop + Pairing Uplift --><div class="campaign-card" style="border-left:4px solid #f59e0b"><div class="campaign-header"><div class="campaign-icon" style="background:linear-gradient(135deg,#f59e0b,#fbbf24)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg></div><div class="campaign-meta"><div class="campaign-title">Shoppables — Exam Drop + Pairing Uplift</div><div class="campaign-desc">Drop exam prices by $15 to attract more patients, then offset the loss by bumping the items most commonly paired with exams. Volume-based pairings from 2025 transaction data.</div><div class="campaign-status" id="c4Status">
+<span class="badge active" id="c4StatusBadge"><span>&#10003;</span> Active</span>
+<button id="c4ActivateBtn" style="display:none" onclick="activateCampaign('shoppables')">▶ Activate</button>
+<div id="c4Progress" style="display:flex;align-items:center;gap:8px;margin-top:6px"><div style="flex:1;height:6px;background:#e2e8f0;border-radius:3px;overflow:hidden"><div id="c4ProgressFill" style="height:100%;background:var(--green);width:0%;border-radius:3px;transition:width 0.5s"></div></div><span id="c4ProgressLabel" style="font-size:0.72rem;color:var(--muted);white-space:nowrap">0/0</span></div>
+     </div></div></div><div id="c4Summary" style="display:flex;gap:2rem;padding:1rem 1.75rem;border-bottom:1px solid var(--border);background:#fffbeb;flex-wrap:wrap"></div><button class="campaign-toggle" onclick="toggleCampaign(this)">See More <span class="toggle-arrow">&#9662;</span></button><div class="campaign-body"><div style="padding:0.6rem 1.75rem;border-bottom:1px solid var(--border);display:flex;gap:0.5rem;align-items:center;flex-wrap:wrap"><span style="font-size:0.72rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-right:0.5rem">Filter:</span><button class="c1-filter active" onclick="c4Filter(this,'all')">All</button><button class="c1-filter" onclick="c4Filter(this,'drops')">Exam Drops</button><button class="c1-filter" onclick="c4Filter(this,'bumps')">Pairing Bumps</button></div><div class="table-scroll"><table><thead><tr><th>Code</th><th>Description</th><th class="num">Type</th><th class="num">Current Price</th><th class="num">New Price</th><th class="num">Delta</th><th class="num">Annual Volume</th><th class="num">Impact / yr</th></tr></thead><tbody id="c4Table"></tbody></table></div></div></div></div></section><!--
  SECTION 3: Inventory Intelligence (Coming Soon)
  --><section id="tab-inventory" class="section"><div style="min-height:60vh;display:flex;align-items:center;justify-content:center;background:#eff6ff"><div style="background:#fff;border-radius:16px;box-shadow:0 2px 16px rgba(37,99,235,0.08);padding:3rem 4rem;text-align:center;max-width:520px"><div style="font-size:3rem;margin-bottom:1rem">🔒</div><div style="font-size:1.4rem;font-weight:700;color:#1e293b;margin-bottom:0.5rem">Inventory Intelligence Locked</div><div style="font-size:0.95rem;color:#94a3b8">Temporarily locked while we audit COGS and revenue data.</div></div></div></section><!--
  SECTION 4: Insights & Actions
@@ -4820,7 +4824,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // ========== CAMPAIGN TRACKING v1.1 ==========
 const CampaignUI = (() => {
-  const campaigns = { inflation: 1, '99-pricing': 2, 'micro-margin': 3 };
+  const campaigns = { inflation: 1, '99-pricing': 2, 'micro-margin': 3, 'shoppables': 4 };
   
   async function loadCampaignState() {
     for (const [type, num] of Object.entries(campaigns)) {
@@ -5089,9 +5093,81 @@ window.c1Items = [];
 window.c2Items = [];
 window.c3Items = [];
 
+// ===== SHOOPABLES CAMPAIGN LOADER =====
+window.c4Items = [];
+async function loadShoppables() {
+  try {
+    const res = await fetch(SB_URL + '/rest/v1/campaigns?select=*&clinic_id=eq.rosslyn&campaign_type=eq.shoppables&status=eq.active&limit=1', {
+      headers: { apikey: SB_KEY, Authorization: 'Bearer ' + SB_KEY }
+    });
+    const camps = await res.json();
+    if (!camps || !camps.length) return;
+    const camp = camps[0];
+
+    const itemsRes = await fetch(SB_URL + '/rest/v1/campaign_items?select=*&campaign_id=eq.' + camp.id + '&order=potential_uplift.desc', {
+      headers: { apikey: SB_KEY, Authorization: 'Bearer ' + SB_KEY }
+    });
+    const items = await itemsRes.json();
+    if (!items || !items.length) return;
+
+    window.c4Items = items;
+
+    // Summary
+    const drops = items.filter(i => i.potential_uplift < 0);
+    const bumps = items.filter(i => i.potential_uplift >= 0);
+    const totalLoss = Math.abs(drops.reduce((s, i) => s + i.potential_uplift, 0));
+    const totalGain = bumps.reduce((s, i) => s + i.potential_uplift, 0);
+    const net = totalGain - totalLoss;
+    const summary = document.getElementById('c4Summary');
+    if (summary) {
+      summary.innerHTML = `
+        <div><div style="font-size:0.72rem;color:var(--muted)">Exam Loss</div><div style="font-size:1.1rem;font-weight:800;color:var(--red)">-$${totalLoss.toLocaleString('en-US',{maximumFractionDigits:0})}</div><div style="font-size:0.68rem;color:var(--muted)">${drops.length} items dropped</div></div>
+        <div><div style="font-size:0.72rem;color:var(--muted)">Pairing Gain</div><div style="font-size:1.1rem;font-weight:800;color:var(--green)">+$${totalGain.toLocaleString('en-US',{maximumFractionDigits:0})}</div><div style="font-size:0.68rem;color:var(--muted)">${bumps.length} items bumped</div></div>
+        <div><div style="font-size:0.72rem;color:var(--muted)">Net / yr</div><div style="font-size:1.1rem;font-weight:800;color:${net>=0?'var(--green)':'var(--red)'}">${net>=0?'+':''}$${net.toLocaleString('en-US',{maximumFractionDigits:0})}</div><div style="font-size:0.68rem;color:var(--muted)">${(totalGain/totalLoss*100).toFixed(0)}% coverage</div></div>
+      `;
+    }
+
+    // Table
+    renderC4Table(items, 'all');
+  } catch (e) {
+    console.error('Shoppables load failed:', e);
+    document.getElementById('c4Table').innerHTML = '<tr><td colspan="8" style="color:var(--red)">Error: ' + e.message + '</td></tr>';
+  }
+}
+
+function renderC4Table(items, filter) {
+  let filtered = items;
+  if (filter === 'drops') filtered = items.filter(i => i.potential_uplift < 0);
+  if (filter === 'bumps') filtered = items.filter(i => i.potential_uplift >= 0);
+
+  document.getElementById('c4Table').innerHTML = filtered.map(it => {
+    const isDrop = it.potential_uplift < 0;
+    const delta = it.suggested_price - it.old_price;
+    const typeLabel = isDrop ? '<span style="color:var(--red);font-weight:600">▼ Drop</span>' : '<span style="color:var(--green);font-weight:600">▲ Bump</span>';
+    return `<tr style="${isDrop?'background:#fff7ed':''}">
+      <td><b>${escHtml(it.treatment_code)}</b></td>
+      <td>${escHtml(it.treatment_name || '')}</td>
+      <td class="num">${typeLabel}</td>
+      <td class="num">$${it.old_price.toFixed(2)}</td>
+      <td class="num" style="color:${isDrop?'var(--red)':'var(--green)'};font-weight:700">$${it.suggested_price.toFixed(2)}</td>
+      <td class="num" style="color:${isDrop?'var(--red)':'var(--green)'}">${isDrop?'':'+'}$${delta.toFixed(2)}</td>
+      <td class="num">${it.annual_volume}</td>
+      <td class="num" style="font-weight:700;color:${isDrop?'var(--red)':'var(--green)'}">${isDrop?'-':'+'}$${Math.abs(it.potential_uplift).toFixed(0)}</td>
+    </tr>`;
+  }).join('');
+}
+
+window.c4Filter = function(btn, filter) {
+  btn.parentElement.querySelectorAll('.c1-filter').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderC4Table(window.c4Items, filter);
+};
+
+function escHtml(s) { return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
 // Load campaign state on init
 document.addEventListener('DOMContentLoaded', () => {
-  setTimeout(() => CampaignUI.loadCampaignState(), 1000);
+  setTimeout(() => { CampaignUI.loadCampaignState(); loadShoppables(); }, 1000);
 });
 
 
@@ -5475,7 +5551,7 @@ function openCampaignImplement(type){
   const title = document.getElementById('implementTitle');
   if(!list||!title) return;
   title.textContent = 'Implement ' + (type==='inflation'?'Inflation Adjustment':type==='99-pricing'?'.99 Pricing':'Micro‑Margin') + ' Campaign';
-  const tableId = type==='inflation'?'c1Table':type==='99-pricing'?'c2Table':'c3Table';
+  const tableId = type==='inflation'?'c1Table':type==='99-pricing'?'c2Table':type==='shoppables'?'c4Table':'c3Table';
   const table = document.getElementById(tableId);
   let rows = table ? Array.from(table.querySelectorAll('tr')) : [];
   if (!rows.length) {
@@ -5511,7 +5587,7 @@ function openCampaignImplement(type){
   document.getElementById('implementModal').style.display='flex';
 }
 function generateReport(type){
-  const tableId = type==='inflation'?'c1Table':type==='99-pricing'?'c2Table':'c3Table';
+  const tableId = type==='inflation'?'c1Table':type==='99-pricing'?'c2Table':type==='shoppables'?'c4Table':'c3Table';
   const table = document.getElementById(tableId);
   if(!table) return alert('No data yet');
   const rows = Array.from(table.querySelectorAll('tr'));

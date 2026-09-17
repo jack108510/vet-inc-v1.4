@@ -1,7 +1,7 @@
 # FeeWatch demo — AmeriVet data export
 
 ## Purpose
-Build a realistic **read-only FeeWatch review experience** from AmeriVet’s raw export. It must show how a pricing or fee change performed after it went live, not recommend a new price or promise revenue uplift.
+Build a realistic **read-only FeeWatch review experience** from AmeriVet’s raw export. It shows how historical pricing or fee changes performed after they went live. FeeWatch cannot create, recommend, approve, or write any price change.
 
 ## Preserve from the current clinic dashboard
 - Clean white workspace, navy/blue visual language, compact KPI cards, left navigation and tables.
@@ -63,7 +63,7 @@ No owner names, pet names, addresses, or clinical notes are needed for the demo.
 - A small, identifiable set of fee changes with at least 90 days before and after each change.
 
 ## Guardrails
-- FeeWatch remains read-only.
+- FeeWatch is read-only: it cannot create, recommend, approve, or write a price change to any PMS.
 - The mockup must label sample/limited evidence honestly.
 - No patient or client identity is required or should be loaded.
 - Do not frame findings as price prescriptions or guaranteed causal outcomes.

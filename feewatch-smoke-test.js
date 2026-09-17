@@ -3,6 +3,7 @@
  * FeeWatch conversion smoke test.
  * Checks the compiled index.html for:
  *   - Required FeeWatch/read-only content and identity
+ *   - Guided case-led review flow (hero + 3-step structure)
  *   - Absence of forbidden legacy action labels
  */
 
@@ -49,6 +50,49 @@ check('Guardrails card present', lower.includes('guardrails') || lower.includes(
 check('"cannot create" price change guardrail', lower.includes('cannot create'));
 check('Analyst actions listed (no price prescription)', lower.includes('review with operations') || lower.includes('monitor next period'));
 check('FeeWatch described as review-only in About', lower.includes('does not create, recommend, approve'));
+
+console.log('\n-- Guided case-led review flow --');
+
+check('Review hero section present (id)', html.includes('id="review-hero-section"'));
+check('Central review question present', html.includes('What happened after this fee change?'));
+check('Hero read-only note present', lower.includes('cannot create, recommend, approve, or write any price change'));
+check('Review steps section present (id)', html.includes('id="review-steps-section"'));
+
+check('Step 1: Change Record heading', html.includes('Change Record'));
+check('Step 1: awaiting-data state present', lower.includes('awaiting data export'));
+check('Step 1: Location field shown', lower.includes('cr-label') && lower.includes('location'));
+check('Step 1: Fee Change field shown', lower.includes('fee change (list price)'));
+check('Step 1: Effective Date field shown', lower.includes('effective date'));
+
+check('Step 2: Outcome Evidence heading', html.includes('Outcome Evidence'));
+check('Step 2: 90-day window described', lower.includes('90-day'));
+check('Step 2: Before/After columns present', lower.includes('before (90d)') && lower.includes('after (90d)'));
+check('Step 2: Actual paid price metric row', lower.includes('actual paid price'));
+check('Step 2: Volume metric row', lower.includes('volume (services performed)'));
+check('Step 2: Net revenue metric row', lower.includes('net revenue'));
+check('Step 2: Discount rate metric row', lower.includes('discount rate'));
+check('Step 2: Transaction count metric row', lower.includes('transaction count'));
+check('Step 2: Matched Baseline column', lower.includes('matched baseline'));
+check('Step 2: awaiting-data state present', lower.includes('awaiting transaction data'));
+
+check('Step 3: Finding & Confidence heading', html.includes('Finding') && html.includes('Confidence'));
+check('Step 3: Finding box present', html.includes('finding-box'));
+check('Step 3: Analyst actions block present', html.includes('analyst-actions'));
+check('Step 3: "Review with operations" action', lower.includes('review with operations'));
+check('Step 3: "Monitor next period" action', lower.includes('monitor next period'));
+check('Step 3: "No material concern" action', lower.includes('no material concern'));
+check('Step 3: Confidence indicators present', html.includes('confidence-indicators'));
+check('Step 3: High confidence label', lower.includes('high') && lower.includes('matched baseline available'));
+check('Step 3: Moderate confidence label', lower.includes('moderate'));
+check('Step 3: Low confidence label', lower.includes('low') && lower.includes('limited sample'));
+check('Step 3: Data limitations list present', html.includes('limits-list'));
+check('Step 3: awaiting-evidence state present', lower.includes('awaiting evidence'));
+check('Step 3: finding note — no price change', lower.includes('none recommend or write a price change'));
+
+check('Queue section divider present (secondary position)', html.includes('id="queue-section-header"'));
+check('Change Portfolio label present', html.includes('Change Portfolio'));
+check('Queue positioned after guided steps in DOM', html.indexOf('id="review-steps-section"') < html.indexOf('id="queue-section-header"'));
+check('Guided steps positioned before Review Queue in DOM', html.indexOf('review-steps-section') < html.indexOf('Review Queue'));
 
 console.log('\n-- Forbidden legacy action labels (must be ABSENT) --');
 

@@ -93,7 +93,7 @@
   .kpi-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 1rem; margin-bottom: 2rem;
+    gap: 1rem; margin-bottom: 1.75rem;
   }
   .kpi-card {
     background: var(--surface); border: 1px solid var(--border);
@@ -250,9 +250,172 @@
   .settings-row-val { font-size: 0.85rem; color: var(--muted); }
   .settings-row-val.ok { color: var(--green); font-weight: 700; }
 
+  /* ─────────────────────────────────────────────────────────
+     GUIDED REVIEW HERO
+  ───────────────────────────────────────────────────────── */
+  .review-hero {
+    background: linear-gradient(135deg, #1e3a5f 0%, #1d4ed8 100%);
+    border-radius: 16px;
+    padding: 2rem 2.25rem 1.75rem;
+    margin-bottom: 1.5rem;
+  }
+  .review-question {
+    font-size: 1.45rem;
+    font-weight: 900;
+    color: #fff;
+    letter-spacing: -0.02em;
+    margin-bottom: 0.7rem;
+    line-height: 1.2;
+  }
+  .review-question-sub {
+    font-size: 0.85rem;
+    color: rgba(255,255,255,0.78);
+    line-height: 1.7;
+    max-width: 680px;
+    margin-bottom: 1.2rem;
+  }
+  .review-question-sub strong { color: rgba(255,255,255,0.95); font-weight: 700; }
+  .review-hero-note {
+    display: inline-flex; align-items: center; gap: 7px;
+    background: rgba(255,255,255,0.11); border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 20px; padding: 5px 14px;
+    font-size: 0.71rem; font-weight: 700; letter-spacing: 0.02em;
+    color: rgba(255,255,255,0.85);
+  }
+
+  /* ─────────────────────────────────────────────────────────
+     REVIEW STEPS
+  ───────────────────────────────────────────────────────── */
+  .review-steps { margin-bottom: 1.5rem; }
+  .review-step { display: flex; gap: 0; }
+  .step-track {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 44px;
+    flex-shrink: 0;
+    padding-top: 1.05rem;
+  }
+  .step-num {
+    width: 28px; height: 28px;
+    background: var(--primary);
+    color: #fff;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.72rem; font-weight: 800;
+    flex-shrink: 0;
+  }
+  .step-line {
+    width: 2px; flex: 1;
+    background: var(--border);
+    min-height: 1.25rem;
+  }
+  .step-body {
+    flex: 1;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 14px; overflow: hidden;
+    margin-bottom: 1.25rem;
+    box-shadow: 0 2px 12px rgba(37,99,235,.04);
+  }
+  .step-head {
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface2);
+  }
+  .step-title {
+    display: block;
+    font-size: 0.9rem; font-weight: 800; color: var(--text);
+    margin-bottom: 2px;
+  }
+  .step-desc { font-size: 0.78rem; color: var(--muted); line-height: 1.55; }
+  .step-content { padding: 1.25rem 1.5rem; }
+
+  /* CHANGE RECORD */
+  .change-record-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 1rem 1.5rem;
+    margin-bottom: 1rem;
+  }
+  .cr-field { display: flex; flex-direction: column; gap: 4px; }
+  .cr-label {
+    font-size: 0.63rem; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.08em; color: var(--muted);
+  }
+  .cr-value { font-size: 0.88rem; font-weight: 600; color: #c7d2e0; }
+  .cr-fee-change { display: flex; align-items: center; gap: 6px; }
+  .cr-arrow { color: #c7d2e0; font-size: 0.85rem; }
+
+  /* STEP AWAITING */
+  .step-awaiting {
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 8px; padding: 0.6rem 0.9rem;
+    font-size: 0.77rem; color: var(--muted); line-height: 1.5;
+  }
+  .step-awaiting span { font-weight: 700; }
+
+  /* DASH VALUES */
+  .dash-val { color: #c7d2e0; }
+
+  /* FINDING LAYOUT */
+  .finding-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+  .finding-section-label {
+    display: block;
+    font-size: 0.63rem; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.08em; color: var(--muted); margin-bottom: 0.45rem;
+  }
+  .finding-box {
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 8px; padding: 0.9rem 1rem;
+    font-size: 0.83rem; color: var(--muted); line-height: 1.65;
+    min-height: 72px;
+  }
+  .analyst-actions { display: flex; flex-direction: column; gap: 0.35rem; }
+  .analyst-action {
+    padding: 0.5rem 0.85rem; border-radius: 7px;
+    font-size: 0.79rem; font-weight: 600; color: #94a3b8;
+    background: var(--surface2); border: 1px solid var(--border);
+  }
+  .finding-note {
+    font-size: 0.7rem; color: var(--muted); margin-top: 0.4rem;
+    font-style: italic; line-height: 1.5;
+  }
+
+  /* CONFIDENCE INDICATORS */
+  .confidence-indicators { display: flex; flex-direction: column; gap: 0.65rem; }
+  .conf-indicator { display: flex; align-items: flex-start; gap: 0.6rem; }
+  .conf-pips { display: flex; gap: 3px; padding-top: 3px; flex-shrink: 0; }
+  .pip { width: 8px; height: 8px; border-radius: 50%; background: #c7d2e0; }
+  .pip-empty { background: transparent; border: 1.5px solid #c7d2e0; }
+  .conf-label { font-size: 0.77rem; color: var(--muted); line-height: 1.45; }
+
+  /* LIMITATIONS LIST */
+  .limits-list {
+    padding-left: 1.1rem;
+    font-size: 0.78rem; color: var(--muted); line-height: 1.8; margin: 0;
+  }
+
+  /* QUEUE SECTION DIVIDER */
+  .queue-section-header {
+    display: flex; align-items: center; gap: 0.75rem;
+    margin-bottom: 0.75rem;
+  }
+  .queue-section-label {
+    font-size: 0.7rem; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.08em; color: var(--muted); white-space: nowrap;
+  }
+  .queue-section-line { flex: 1; height: 1px; background: var(--border); }
+  .queue-section-note { font-size: 0.7rem; color: var(--muted); white-space: nowrap; }
+
   /* RESPONSIVE */
   @media (max-width: 900px) {
     .section { padding: 1rem; }
+  }
+  @media (max-width: 700px) {
+    .finding-layout { grid-template-columns: 1fr; }
+    .review-question { font-size: 1.15rem; }
+    .queue-section-note { display: none; }
+    .change-record-grid { grid-template-columns: repeat(2, 1fr); }
   }
   @media (max-width: 600px) {
     .header { padding: 0 1rem; }
@@ -276,7 +439,7 @@
       <div class="logo-text">Fee<span>Watch</span></div>
     </div>
     <div class="header-divider"></div>
-    <div class="context-label">AmeriVet — Pricing Change Review</div>
+    <div class="context-label">AmeriVet &mdash; Pricing Change Review</div>
   </div>
   <div class="header-right">
     <div class="readonly-badge">
@@ -323,7 +486,9 @@
   </button>
 </nav>
 
-<!-- SECTION 1: Pricing Change Review -->
+<!-- ═══════════════════════════════════════════════════════
+     SECTION 1: Pricing Change Review
+═══════════════════════════════════════════════════════ -->
 <section id="tab-review" class="section active">
   <div class="page-header">
     <div class="page-title">Pricing Change Review</div>
@@ -354,19 +519,237 @@
     </div>
   </div>
 
-  <!-- Info Banner -->
+  <!-- ── GUIDED REVIEW HERO ─────────────────────────────── -->
+  <div class="review-hero" id="review-hero-section">
+    <div class="review-question">What happened after this fee change?</div>
+    <p class="review-question-sub">
+      FeeWatch walks through three steps for every historical fee change: the <strong>change record</strong> as filed in the PMS,
+      the <strong>outcome evidence</strong> drawn from 90-day transaction windows before and after,
+      and the <strong>analyst finding</strong> with explicit confidence level and data limitations.
+      Select a change from the portfolio below to begin a review.
+    </p>
+    <div class="review-hero-note">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+      </svg>
+      Read-only review &mdash; FeeWatch cannot create, recommend, approve, or write any price change
+    </div>
+  </div>
+
+  <!-- ── GUIDED REVIEW STEPS ───────────────────────────── -->
+  <div class="review-steps" id="review-steps-section">
+
+    <!-- Step 1: Change Record -->
+    <div class="review-step">
+      <div class="step-track">
+        <div class="step-num">1</div>
+        <div class="step-line"></div>
+      </div>
+      <div class="step-body">
+        <div class="step-head">
+          <span class="step-title">Change Record</span>
+          <span class="step-desc">What was changed, where, and when &mdash; exactly as recorded in the PMS. No interpretation or adjustment applied.</span>
+        </div>
+        <div class="step-content">
+          <div class="change-record-grid">
+            <div class="cr-field">
+              <span class="cr-label">Location</span>
+              <span class="cr-value">&mdash;</span>
+            </div>
+            <div class="cr-field">
+              <span class="cr-label">Service / Code</span>
+              <span class="cr-value">&mdash;</span>
+            </div>
+            <div class="cr-field">
+              <span class="cr-label">Category</span>
+              <span class="cr-value">&mdash;</span>
+            </div>
+            <div class="cr-field">
+              <span class="cr-label">Fee Change (List Price)</span>
+              <div class="cr-fee-change">
+                <span class="cr-value">&mdash;</span>
+                <span class="cr-arrow">&#8594;</span>
+                <span class="cr-value">&mdash;</span>
+              </div>
+            </div>
+            <div class="cr-field">
+              <span class="cr-label">Effective Date</span>
+              <span class="cr-value">&mdash;</span>
+            </div>
+            <div class="cr-field">
+              <span class="cr-label">% Change (list fee)</span>
+              <span class="cr-value">&mdash;</span>
+            </div>
+            <div class="cr-field">
+              <span class="cr-label">Change Direction</span>
+              <span class="cr-value">&mdash;</span>
+            </div>
+            <div class="cr-field">
+              <span class="cr-label">Days Since Effective</span>
+              <span class="cr-value">&mdash;</span>
+            </div>
+          </div>
+          <div class="step-awaiting">
+            <span>Awaiting data export</span> &mdash; the change record will populate once AmeriVet fee history is loaded. Each field reflects the PMS record directly, with no adjustment.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 2: Outcome Evidence -->
+    <div class="review-step">
+      <div class="step-track">
+        <div class="step-num">2</div>
+        <div class="step-line"></div>
+      </div>
+      <div class="step-body">
+        <div class="step-head">
+          <span class="step-title">Outcome Evidence</span>
+          <span class="step-desc">90-day transaction windows before and after the effective date, compared against a matched historical baseline. No causal claims are made without sufficient transaction volume.</span>
+        </div>
+        <div class="step-content">
+          <div class="table-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th>Metric</th>
+                  <th class="num">Before (90d)</th>
+                  <th class="num">After (90d)</th>
+                  <th class="num">Change</th>
+                  <th class="num">vs. Matched Baseline</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Actual paid price (median per transaction)</td>
+                  <td class="num"><span class="dash-val">&mdash;</span></td>
+                  <td class="num"><span class="dash-val">&mdash;</span></td>
+                  <td class="num"><span class="dash-val">&mdash;</span></td>
+                  <td class="num"><span class="dash-val">&mdash;</span></td>
+                </tr>
+                <tr>
+                  <td>Volume (services performed)</td>
+                  <td class="num"><span class="dash-val">&mdash;</span></td>
+                  <td class="num"><span class="dash-val">&mdash;</span></td>
+                  <td class="num"><span class="dash-val">&mdash;</span></td>
+                  <td class="num"><span class="dash-val">&mdash;</span></td>
+                </tr>
+                <tr>
+                  <td>Net revenue</td>
+                  <td class="num"><span class="dash-val">&mdash;</span></td>
+                  <td class="num"><span class="dash-val">&mdash;</span></td>
+                  <td class="num"><span class="dash-val">&mdash;</span></td>
+                  <td class="num"><span class="dash-val">&mdash;</span></td>
+                </tr>
+                <tr>
+                  <td>Discount rate</td>
+                  <td class="num"><span class="dash-val">&mdash;</span></td>
+                  <td class="num"><span class="dash-val">&mdash;</span></td>
+                  <td class="num"><span class="dash-val">&mdash;</span></td>
+                  <td class="num"><span class="dash-val">&mdash;</span></td>
+                </tr>
+                <tr>
+                  <td>Transaction count</td>
+                  <td class="num"><span class="dash-val">&mdash;</span></td>
+                  <td class="num"><span class="dash-val">&mdash;</span></td>
+                  <td class="num"><span class="dash-val">&mdash;</span></td>
+                  <td class="num"><span class="dash-val">&mdash;</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="step-awaiting" style="margin-top:0.85rem;">
+            <span>Awaiting transaction data</span> &mdash; requires fee history and invoice lines with at least 90 days of transactions before and after each change date.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 3: Finding & Confidence -->
+    <div class="review-step">
+      <div class="step-track">
+        <div class="step-num">3</div>
+        <!-- no step-line: last step -->
+      </div>
+      <div class="step-body">
+        <div class="step-head">
+          <span class="step-title">Finding &amp; Confidence</span>
+          <span class="step-desc">A short, bounded conclusion with explicit confidence level and data limitations. Analyst actions are read-only; none recommend or implement a price change.</span>
+        </div>
+        <div class="step-content">
+          <div class="finding-layout">
+            <div class="finding-left">
+              <span class="finding-section-label">Finding</span>
+              <div class="finding-box">
+                The finding will appear here once outcome evidence has been assessed.
+                FeeWatch does not make causal claims without supporting transaction data.
+              </div>
+              <span class="finding-section-label" style="margin-top:1.1rem;">Analyst Action</span>
+              <div class="analyst-actions">
+                <div class="analyst-action">Review with operations</div>
+                <div class="analyst-action">Monitor next period</div>
+                <div class="analyst-action">No material concern</div>
+              </div>
+              <div class="finding-note">Analyst actions are read-only conclusions &mdash; none recommend or write a price change.</div>
+            </div>
+            <div class="finding-right">
+              <span class="finding-section-label">Confidence Level</span>
+              <div class="confidence-indicators">
+                <div class="conf-indicator">
+                  <div class="conf-pips">
+                    <span class="pip"></span><span class="pip"></span><span class="pip"></span>
+                  </div>
+                  <span class="conf-label"><strong>High</strong> &mdash; strong evidence, adequate volume, matched baseline available</span>
+                </div>
+                <div class="conf-indicator">
+                  <div class="conf-pips">
+                    <span class="pip"></span><span class="pip"></span><span class="pip pip-empty"></span>
+                  </div>
+                  <span class="conf-label"><strong>Moderate</strong> &mdash; adequate evidence with noted limitations</span>
+                </div>
+                <div class="conf-indicator">
+                  <div class="conf-pips">
+                    <span class="pip"></span><span class="pip pip-empty"></span><span class="pip pip-empty"></span>
+                  </div>
+                  <span class="conf-label"><strong>Low</strong> &mdash; limited sample, no matched baseline, or confounding changes present</span>
+                </div>
+              </div>
+              <span class="finding-section-label" style="margin-top:1.1rem;">Data Limitations (when applicable)</span>
+              <ul class="limits-list">
+                <li>Awaiting transaction volume to assess sample adequacy</li>
+                <li>Matched-baseline availability depends on fee history export scope</li>
+                <li>Concurrent fee changes or seasonal effects will be noted where identified</li>
+                <li>Insufficient evidence (&lt;90 days post-change) flags a change for future review</li>
+              </ul>
+              <div class="step-awaiting" style="margin-top:0.85rem;">
+                <span>Awaiting evidence</span> &mdash; confidence and finding will be determined once outcome data is available.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div><!-- /.review-steps -->
+
+  <!-- ── CHANGE PORTFOLIO (secondary) ─────────────────── -->
+  <div class="queue-section-header" id="queue-section-header">
+    <span class="queue-section-label">Change Portfolio</span>
+    <div class="queue-section-line"></div>
+    <span class="queue-section-note">Select a change above to view its guided review</span>
+  </div>
+
   <div class="info-banner">
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
       <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
     </svg>
     <span>
-      <strong>Export pending.</strong> The AmeriVet raw data export has not yet been loaded.
-      Once fee history and transaction lines are available, this queue will populate with reviewed changes.
+      <strong>Export pending.</strong> The AmeriVet data export has not yet been loaded.
+      Once fee history and transaction lines are available, this portfolio will populate with reviewed changes
+      and each row can be selected to walk through the guided review above.
       See the <a href="#" onclick="showTab('data', document.querySelector('[onclick*=data]')); return false;" style="color:#1d4ed8;font-weight:700">Data Readiness</a> tab for required inputs.
     </span>
   </div>
 
-  <!-- Review Queue Table -->
   <div class="table-card">
     <div class="table-header">
       <span class="table-header-title">Review Queue</span>
@@ -399,8 +782,9 @@
                 <div class="empty-title">No fee changes loaded</div>
                 <div class="empty-body">
                   The review queue will populate once the AmeriVet export is loaded.
-                  Each row will show a historical fee change with its before/after performance,
-                  review status, and evidence-led finding.
+                  Each row shows a historical fee change with its before/after performance,
+                  review status, and evidence-led finding. Selecting a row will populate the
+                  guided review steps above.
                 </div>
               </div>
             </td>
@@ -409,31 +793,11 @@
       </table>
     </div>
   </div>
-
-  <!-- Change Detail Placeholder -->
-  <div class="table-card">
-    <div class="table-header">
-      <span class="table-header-title">Change Detail</span>
-      <span class="table-meta">Select a row above to view evidence</span>
-    </div>
-    <div class="empty-state" style="padding: 2.5rem;">
-      <div class="empty-icon">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
-        </svg>
-      </div>
-      <div class="empty-title">No change selected</div>
-      <div class="empty-body">
-        Once data is loaded, selecting a row in the Review Queue will display the change record,
-        before/after volume and revenue, baseline comparison, analyst finding, and recommended action.
-        FeeWatch does not recommend price changes &mdash; analyst actions are limited to
-        <em>Review with operations</em>, <em>Monitor next period</em>, or <em>No material concern</em>.
-      </div>
-    </div>
-  </div>
 </section>
 
-<!-- SECTION 2: Locations -->
+<!-- ═══════════════════════════════════════════════════════
+     SECTION 2: Locations
+═══════════════════════════════════════════════════════ -->
 <section id="tab-locations" class="section">
   <div class="page-header">
     <div class="page-title">Locations</div>
@@ -472,7 +836,6 @@
     </div>
   </div>
 
-  <!-- Location detail scaffold (shown when a location is selected) -->
   <div class="table-card">
     <div class="table-header">
       <span class="table-header-title">Location Detail</span>
@@ -494,7 +857,9 @@
   </div>
 </section>
 
-<!-- SECTION 3: Data Readiness -->
+<!-- ═══════════════════════════════════════════════════════
+     SECTION 3: Data Readiness
+═══════════════════════════════════════════════════════ -->
 <section id="tab-data" class="section">
   <div class="page-header">
     <div class="page-title">Data Readiness</div>
@@ -608,7 +973,9 @@
   </div>
 </section>
 
-<!-- SECTION 4: Settings -->
+<!-- ═══════════════════════════════════════════════════════
+     SECTION 4: Settings
+═══════════════════════════════════════════════════════ -->
 <section id="tab-settings" class="section">
   <div class="settings-wrap">
     <div class="page-header">

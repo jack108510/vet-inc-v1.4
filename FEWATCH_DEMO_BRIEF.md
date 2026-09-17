@@ -3,6 +3,11 @@
 ## Purpose
 Build a realistic **read-only FeeWatch review experience** from AmeriVet’s raw export. It shows how historical pricing or fee changes performed after they went live. FeeWatch cannot create, recommend, approve, or write any price change.
 
+## Demo boundary
+This is a **clickable, data-backed demonstration**, not a production application. Once AmeriVet’s export arrives, we will use a curated static dataset derived from it to populate the screens and interactions. Do not build live imports, API integrations, authentication, saved workflows, PMS writeback, or production-grade multi-tenant infrastructure for this phase.
+
+The objective is a credible product walkthrough: selected historical fee changes, their evidence, appropriate limits, and portfolio/location views based on the supplied export.
+
 ## Preserve from the current clinic dashboard
 - Clean white workspace, navy/blue visual language, compact KPI cards, left navigation and tables.
 - Familiar location/context header.
